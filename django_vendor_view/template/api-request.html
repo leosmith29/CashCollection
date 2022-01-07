@@ -1,0 +1,143 @@
+lic{% extends "base.html" %}
+
+{% block content %}
+
+
+<div class="wrapper">
+         <div class="container-fluid">
+            <!-- Page-Title -->
+            <div class="row">
+               <div class="col-sm-12">
+                  <div class="page-title-box">
+                     <div class="btn-group pull-right">
+                        <ol class="breadcrumb hide-phone p-0 m-0">
+                           <li class="breadcrumb-item"><a href="#">Table</a></li>
+                           <li class="breadcrumb-item active">Api</li>
+                        </ol>
+                     </div>
+                     <h4 class="page-title">Api Requests</h4>
+                  </div>
+               </div>
+            </div>
+            <!-- end page title end breadcrumb -->
+            <div class="row">
+               <div class="col-12">
+                  <div class="card m-b-30">
+                     <div class="card-body">
+                        <h4 class="mt-0 header-title">Api Requests Table</h4>
+                        <p><b>ApI TOKEN</b> - {{request.session.token}}</p>
+                        <table id="payments" class="table table-bordered" query="SELECT url_encode,api_id,body_post,request_type,status from tbl_cashcollect_api_request where username = '{{request.session.username}}'" datas='[{"data":"api_id"},{"data":"url_encode"},{"data":"request_type"},{"data":"body_post"},{"data":"status"}]'>
+                           <thead>
+                              <tr>
+                                       <th>API ID</th>
+                                       <th>URL</th>
+                                       <th>Method</th>
+                                       <th>BODY</th>
+                                       <th>status</th>
+                              </tr>
+                           </thead>
+                           <tbody>
+                              <tr>
+                                 <td>Tiger Nixon</td>
+                                 <td>System Architect</td>
+                                 <td>Edinburgh</td>
+                                 <td>61</td>
+                              </tr>
+                              <tr>
+                                 <td>Garrett Winters</td>
+                                 <td>Accountant</td>
+                                 <td>Tokyo</td>
+                                 <td>63</td>
+                              </tr>
+                              <tr>
+                                 <td>Ashton Cox</td>
+                                 <td>Junior Technical Author</td>
+                                 <td>San Francisco</td>
+                                 <td>66</td>
+                              </tr>
+                              <tr>
+                                 <td>Cedric Kelly</td>
+                                 <td>Senior Javascript Developer</td>
+                                 <td>Edinburgh</td>
+                                 <td>22</td>
+                              </tr>
+                              <tr>
+                                 <td>Airi Satou</td>
+                                 <td>Accountant</td>
+                                 <td>Tokyo</td>
+                                 <td>33</td>
+                              </tr>
+                              <tr>
+                                 <td>Brielle Williamson</td>
+                                 <td>Integration Specialist</td>
+                                 <td>New York</td>
+                                 <td>61</td>
+                              </tr>
+                              <tr>
+                                 <td>Herrod Chandler</td>
+                                 <td>Sales Assistant</td>
+                                 <td>San Francisco</td>
+                                 <td>59</td>
+                              </tr>
+                              <tr>
+                                 <td>Rhona Davidson</td>
+                                 <td>Integration Specialist</td>
+                                 <td>Tokyo</td>
+                                 <td>55</td>
+                              </tr>
+                              <tr>
+                                 <td>Shad Decker</td>
+                                 <td>Regional Director</td>
+                                 <td>Edinburgh</td>
+                                 <td>51</td>
+                              </tr>
+                              <tr>
+                                 <td>Michael Bruce</td>
+                                 <td>Javascript Developer</td>
+                                 <td>Singapore</td>
+                                 <td>29</td>
+                              </tr>
+                              <tr>
+                                 <td>Donna Snider</td>
+                                 <td>Customer Support</td>
+                                 <td>New York</td>
+                                 <td>27</td>
+                              </tr>
+                           </tbody>
+                        </table>
+                        <div>
+                           <h5>POST TRANSACTION API</h5>
+                           <p>POST /cashcollect/post/collection HTTP/1.1</p>
+<p>Host: 0.0.0.0:8001</p>
+<p>Authorization: Bearer {API TOKEN}</p>
+<p>Content-Type: application/json</p>
+<p>Content-Length: 171</p>
+
+<p>{
+    "amount":20,
+    "transaction_ref":"3454900333322W",
+    "payment_mode":"cash",
+    "channel":"ussd",
+    "bill_type":"prepaid",
+    "account_number":"6406801948"
+
+}</p>
+                        </div>
+<br/>
+<div>
+   <h5>GET CUSTOMER DETAILS API</h5>
+   <p>GET /cashcollect/customer/find?account_number=640680 HTTP/1.1</p>
+<p>Host: 0.0.0.0:8001</p>
+<p>Authorization: Bearer {API TOKEN}</p>
+</div>
+                     </div>
+                  </div>
+               </div>
+               <!-- end col -->
+            </div>
+         </div>
+         <!-- end container -->
+      </div>
+
+
+{% endblock content %}

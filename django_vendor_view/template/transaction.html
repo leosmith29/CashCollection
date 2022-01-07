@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<div class="wrapper">
+         <div class="container-fluid">
+            <!-- Page-Title -->
+            <div class="row">
+               <div class="col-sm-12">
+                  <div class="page-title-box">
+                     <div class="btn-group pull-right">
+                        <ol class="breadcrumb hide-phone p-0 m-0">
+                           <li class="breadcrumb-item"><a href="#">Table</a></li>
+                           <li class="breadcrumb-item active">Transactions</li>
+                        </ol>
+                     </div>
+                     <h4 class="page-title">Transactions</h4>
+                  </div>
+               </div>
+            </div>
+            <!-- end page title end breadcrumb -->
+            <div class="row">
+               <div class="col-12">
+                  <div class="card m-b-30">
+                     <div class="card-body">
+                        <h4 class="mt-0 header-title">Transactions Table</h4>
+                        <table id="payments" class="table table-bordered" query="SELECT * from tbl_cashcollection_transactions where vendor = '{{request.session.username}}'" datas='[{"data":"request_api_id"},{"data":"transaction_ref"},{"data":"trans_date"},{"data":"account_number"},{"data":"amount"},{"data":"channel"},{"data":"payment_mode"},{"data":"bill_type"}]'>
+                           <thead>
+                              <tr>
+                                       <th>API POST ID</th>
+                                       <th>Transaction REF</th>
+                                       <th>Date</th>
+                                       <th>Account Number</th>
+                                       <th>Amount</th>
+                                       <th>Channel</th>
+                                       <th>Payment Mode</th>
+                                       <th>Bill Type</th>
+
+                              </tr>
+                           </thead>
+                           <tbody>
+                           </tbody>
+                        </table>
+                     </div>
+                  </div>
+               </div>
+               <!-- end col -->
+            </div>
+         </div>
+         <!-- end container -->
+      </div>
+
+
+{% endblock content %}

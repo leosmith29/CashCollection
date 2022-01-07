@@ -1,0 +1,332 @@
+
+<html>
+    {% load static %}
+    <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    </head>
+    
+    <body style="background-color:#fff;height:100vh ">
+
+        <div style="width: 50%; margin: 0 auto;margin-top: 250px">
+        <table class="table table-striped">
+            <tbody>
+            <tr>
+                <th>Email</th>
+                <td id="email-element">customer@gmail.com</td>
+            </tr>
+            <tr>
+                <th>Phone</th>
+                <th id="phone-element">1+ 23456789</th>
+            </tr>
+            <tr>
+                <th>Amount</th>
+                <th id="amount-element">0</th>
+            </tr>
+            </tbody>
+        </table>
+        <button type="button" class="btn btn-success" id="submit-btn" onclick="payWithPaystack()" style="width: 220px">
+            Pay NGN 0
+        </button>
+        </div>
+    </body>
+</html>
+<script src="{% static 'app/jquery.min.js' %}"></script>
+<script src="https://js.paystack.co/v1/inline.js"></script>
+<script src="{% static 'app/globals.js' %}"></script>
+<script src="{% static 'app/request.js' %}"></script>
+<script>
+    const globalData = {};
+    let callback = undefined; 
+    const dataForBackend = {};
+
+    $(document).ready(function () {
+        const auto = getParam("auto");
+        console.log("auto", auto);
+        /***
+        'pk_test_8f6a255c6f6bc1554b027e197c08b2c2e72c5097'
+        **/
+        if (auto == "true") {
+            console.log("true");
+            payWithPaystackInit({
+                paystackKey: getParam("paystackKey"),
+                paystackSecretKey: getParam("paystackSecretKey"),
+                amount: getParam("amount"),
+                extraData: {
+                    reference: getParam("reference"),
+                    bill_type: getParam("bill_type"),
+                    channel: getParam("channel"),
+                    payment_mode: getParam("payment_mode"),
+                    accountNo: getParam("accountNo"),
+                }
+                
+            });
+        }
+    });
+
+    const generateUuid = function(){
+        return Date.now().toString(36) + Math.random().toString(36).substr(2);
+    };
+
+    /**
+    * @param {{
+        paystackKey: String,
+        paystackSecretKey: String,
+        email: String,
+        amount: String,
+        reference: String,
+        phone: String,
+        currency: String,
+    }} opts
+    */
+    function payWithPaystackInit(opts) {
+        console.log("opts", opts);
+        if (opts.extraData === undefined) opts['extraData'] = {};
+        const currency = opts.currency || "NGN"
+        
+        if (opts.payStackKey) globalData['payStackKey'] = opts.payStackKey;
+        if (opts.payStackSecretKey) globalData['payStackSecretKey'] = opts.payStackSecretKey;
+        globalData['email'] = (opts.email) ? opts.email :  "jc@gmail.com";
+        globalData['amount'] = (opts.amount) ? opts.amount : 0;
+        globalData['ref'] = (opts.reference) ? opts.reference : generateUuid();
+        globalData['phone'] = (opts.phone) ? opts.phone : "08108766401"
+        globalData['bill_type'] = (opts.extraData.bill_type) ? opts.extraData.bill_type : globalData['bill_type'];
+        globalData['channel'] = (opts.extraData.channel) ? opts.extraData.channel : globalData['channel'];
+        globalData['payment_mode'] = (opts.extraData.payment_mode) ?  opts.extraData.payment_mode : globalData['payment_mode'];
+        globalData['accountNumber'] = (opts.extraData.accountNo) ?  opts.extraData.accountNo : globalData['accountNumber'];
+        
+        
+        
+        
+        globalData['currency'] = currency;
+        callback = opts.callback;
+        if (opts.successEndpoint) globalData['successEndpoint'] = opts.successEndpoint || "";
+        if (opts.failedEndpoint) globalData['failedEndpoint'] = opts.failedEndpoint || "";
+        if (opts.standAlone) globalData['standAlone'] = opts.standAlone || "";
+        if (opts.extraData.authorization) globalData['authorization'] = opts.extraData.authorization || "";
+        if (opts.extraData.method) globalData['method'] = opts.extraData.method || undefined;
+        
+        globalData['dataForBackend'] = { 
+            "amount": globalData['amount'], "transaction_ref":globalData['ref'], "payment_mode": globalData['payment_mode'], "channel": globalData['channel'], "bill_type": globalData['bill_type'], "account_number": globalData['accountNumber']
+        };
+        // redirect, callback, standalone
+        
+        const displayString = `Pay ${currency} ${globalData['amount']}`
+        document.getElementById("submit-btn").innerText = displayString;
+        document.getElementById("amount-element").innerText = globalData['amount'];
+        document.getElementById("phone-element").innerText = globalData['phone'];
+        document.getElementById("email-element").innerText = globalData['email'];
+
+        console.log("data" ,globalData);
+    }
+
+    payWithPaystackInit({
+        payStackKey: 'pk_test_7e61081e3bc827d4dec381ea0cd672c23cd2827b',
+        payStackSecretKey: 'sk_test_8f98d60218f31cff548db6406ea3511a71e362fa',
+        amount: 100,
+        successEndpoint: "http://0.0.0.0:80/cashcollect/post/collection",
+        extraData: { 
+            "payment_mode": "cash",
+            "channel": "ussd",
+            "bill_type": "",
+            "account_number": "6406801948",
+            "authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBheXN0YWNrMTIiLCJpYXQiOjE2MTE5MDg1NzZ9.phA-rqQxhpAWa5Dyd-tdMRA95scruPfHsYnAq8OG0XU",
+            method: "POST",
+        },
+        standAlone: true,
+    });
+    function payWithPaystack(opts){
+        if (opts === undefined || opts === null) {
+            opts = globalData;
+            if (Object.keys(globalData).length < 1) return;
+        }
+
+        let resp = {...{
+            authorizationKey: opts.authorization,
+            successEndpoint: opts.successEndpoint,
+            failedEndpoint: opts.failedEndpoint,
+        }, ...globalData};
+
+        var handler = PaystackPop.setup({
+            key: opts.payStackKey,
+        email: opts.email,
+        amount: (opts.amount * 100),
+        currency: "" + opts.currency,
+        ref: '' + opts.ref,
+        
+        // key: 'pk_test_7e61081e3bc827d4dec381ea0cd672c23cd2827b',
+        // email: 'userEmail@yahoo.com',
+        // amount: 100 * 100,
+        // currency: "NGN",
+        // ref: "ref128474103a",
+        metadata: {},
+        callback: function(response){
+            console.log('loggind succ data');
+            resp = {...resp, ...{
+                event:'successful', 
+                transactionRef:response, 
+                reference: response.reference,
+            }};
+            messageReceived({
+                data: resp, 
+                payStackSecretKey: opts.payStackSecretKey, 
+                standAlone: opts.standAlone
+            });
+            // return 
+        },
+        onClose: function(){
+            console.log('loggind data');
+            resp = {...resp, ...{event:'cancelled', reference: opts.ref}};
+            messageReceived({data: resp, payStackSecretKey: opts.payStackSecretKey, standAlone: opts.standAlone});
+            // return
+        }
+        });
+        handler.openIframe();
+    }
+
+    messageReceived = async (opts) => {
+        let data = opts.data;
+        const paystackSecretKey = opts.payStackSecretKey;
+        const standAlone=opts.standAlone;
+        const webResponse = data;
+        const returnData = {};
+
+        const failedRequest = () => {
+            if (!opts.data.failedEndpoint || opts.data.failedEndpoint === "") {
+                return;
+            }
+            standAloneRequest(opts.data.failedEndpoint, undefined, opts.method, data.authorizationKey);
+        }
+    
+        switch (webResponse.event) {
+        case "cancelled":
+            /** was cancelled */
+            console.log("was cancelled");
+            returnData['status'] = false;
+            break;
+        case "successful":
+            // verify transaction
+            const reference = webResponse.reference;
+            console.log("paystackSecretKey", paystackSecretKey);
+            await fetch(`https://api.paystack.co/transaction/verify/${reference}`, {
+            method: "GET",
+            headers: {
+                Authorization: "Bearer " + paystackSecretKey,
+            },
+            })
+            .then((response) => response.json())
+            .then(async (data) => {
+                /** was verified successfully */
+                if (data.data.status == 'success') {
+                /** payment was verified post to deposit */
+                returnData['status'] = true;
+                returnData['reference'] = reference;
+                if (standAlone) {
+                    console.log("stand alone", opts, data, opts.data.successEndpoint);
+                    standAloneRequest(opts.data.successEndpoint, undefined, opts.method, opts.data.authorizationKey)
+                }
+                }
+                else {
+                    returnData['status'] = false;   
+                    failedRequest();
+                }
+            })
+            .catch((error) => {
+                // props.onCancel();
+                console.log("failed verified", JSON.stringify(error), error);
+                returnData['status'] = false;
+                failedRequest();
+            });
+            break;
+
+        default:
+            console.warn('Unhandled event', webResponse)
+            returnData['status'] = false;
+            failedRequest();
+            break;
+        };
+
+        if (typeof callback === "function") { 
+            callback(returnData);
+        }
+};
+
+function getParam(name){
+    if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.search)) return decodeURIComponent(name[1]);
+}
+
+async function standAloneRequest(url, data=undefined, method="POST", authorizationKey="") {
+    if (data != undefined && type === "GET") {
+      url = new URL(Base + Url);
+      let search = new URLSearchParams(data).toString();
+      
+      url = url+"?"+search;
+    }
+
+    let header = {};
+    
+    if (authorizationKey !== "") 
+    {
+        console.log("authorizationKey", header, authorizationKey);
+        header = {
+            Authorization: "Bearer " + authorizationKey,
+          };
+
+          console.log("authorizationKey", header);
+    }
+    else {
+        header = {
+        };
+    }
+
+    console.log("authorizationKey", header);
+
+    log("total_cus", "url", data, url, method);
+
+    //          mode: 'no-cors',
+
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", "Bearer ");
+    myHeaders.append("Content-Type", "application/json");
+
+    // var raw = ({"payment_mode":globalData['payment_mode'],"channel":globalData['channel'],"bill_type":globalData['bill_type'],"account_number":globalData['accountNumber'],"amount": globalData['amount'],"transaction_ref": globalData['ref'], "authorization": authorizationKey});
+
+    // window.location.href = `/test_request/?data={${"payment_mode":globalData['payment_mode'],"channel":globalData['channel'],"bill_type":globalData['bill_type'],"account_number":globalData['accountNumber'],"amount": globalData['amount'],"transaction_ref": , "authorization": authorizationKey}}`;
+
+    window.location.href = `/test_request/?data=true&reference=${globalData['ref']}&bill_type=${globalData['bill_type']}&channel=${globalData['channel']}&payment_mode=${globalData['payment_mode']}&amount=${globalData['amount']}&account_number=${globalData['accountNumber']}&authorization=${authorizationKey}`;
+
+    // var requestOptions = {
+    //     method: 'POST',
+    //     headers: myHeaders,
+    //     body: raw,
+    //     redirect: 'follow'
+    // };
+
+// fetch("http://0.0.0.0:80/cashcollect/post/collection", requestOptions)
+//   .then(response => response.text())
+//   .then(result => console.log(result))
+//   .catch(error => console.log('error', error));
+    
+    // return await fetch(`${url}`, {
+    //       method: method,
+    //       headers: {
+    //         "Authorization": "Bearer " + "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBheXN0YWNrMTIiLCJpYXQiOjE2MTE5MDg1NzZ9.phA-rqQxhpAWa5Dyd-tdMRA95scruPfHsYnAq8OG0XU",
+    //       },
+    //     })
+    //       .then((response) => response.json())
+    //       .then(async (data) => {
+    //         /** backend 'informed' successfully */
+    //         return true;
+    //       })
+    //       .catch((error) => {
+    //           return false;
+    //       });
+}
+
+// window.addEventListener("flutterInAppWebViewPlatformReady", function(event) {});
+    
+</script>

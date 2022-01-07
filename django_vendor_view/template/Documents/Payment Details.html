@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+    
+    <title>Payment Details</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+
+{% load static %}
+    <link href="{% static 'detail/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'detail/font-awesome.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'detail/jquery.scrollbar.css' %}" rel="stylesheet" type="text/css" media="screen">
+    <link href="{% static 'detail/switchery.min.css' %}" rel="stylesheet" type="text/css" media="screen">
+    <link href="{% static 'detail/pages-icons.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'detail/dataTables.bootstrap.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'detail/home.css' %}" rel="stylesheet" type="text/css">
+    <link class="main-stylesheet" href="{% static 'detail/pages.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'detail/materialize-social.css' %}" rel="stylesheet" type="text/css">
+
+    
+    <script src="{% static 'detail/jquery-1.11.1.min.js' %}" type="text/javascript"></script>
+<style>
+    body.fixed-header .header {
+        position: inherit;
+    }
+</style>
+</head>
+   <body class="fixed-header no-header" style="overflow-x:hidden;">
+    <div class="pace  pace-inactive pace-inactive"><div class="pace-progress" data-progress-text="100%" data-progress="99" style="transform: translate3d(100%, 0px, 0px);">
+  <div class="pace-progress-inner"></div>
+</div>
+<div class="pace-activity"></div></div><div id="iswPaymentContainer"></div>
+<div id="preloader" style="display: none;" class="hidden">
+    <div class="loader">
+    <div class="bubble-1"></div>
+    <div class="bubble-2"></div>
+    <div class="bubble-3"></div>
+  </div>
+    <h3 id="message" class="text-center"> </h3>
+</div>
+
+
+<div class="page-container p-l-0">
+
+    <div class="header bg-primary text-white">
+    
+        <a href="#" class="btn-link hidden toggle-sidebar hidden-lg-up pg pg-menu" data-toggle="sidebar">
+        </a>
+    
+        <div class="">
+            <div class="brand inline   ">
+    
+                <img style="display:inline-block; background: white;padding: 3px;border-radius: 2px" src="detail/eedclogo.png" alt="EEDC" data-src="/energypay/images/eedclogo.png" data-src-retina="/energypay/images/eedclogo.png" width="80" height="40">
+    
+                <h4 class="text-white" style="display:inline-block; padding-top: 0px;
+                    color: #FFF; font-weight: 600; text-shadow: 0 7px 10px rgba(0,0,0,0.07), 0 4px 4px rgba(0,0,0,0.2);">
+                    EnergyPay</h4>
+            </div>
+        </div>
+        <div class="d-flex align-items-center text-white">
+    
+                <a href="#" class="header-icon btn-link m-l-10 sm-no-margin d-inline-block" data-toggle="quickview" data-toggle-element="#quickview"> <span>Login</span></a>
+            <div class="dropdown dropdown-default">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Lang
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="#">English</a>
+                    <a class="dropdown-item" href="#">Igbo </a>
+                </div>
+            </div>
+    
+        </div>
+    </div>
+    <div class="overlayPanel" id="overlay" onclick="hideOverlay()"></div>
+    <div class="page-content-wrapper  ng-scope" ng-app="lightPayApp">
+
+        <div class="content  ng-scope" id="formController" ng-controller="FormController as formService">
+
+            <div class=" container-fluid   container-fixed-lg">
+
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="javascript::viod()">Home</a></li>
+                    <li class="breadcrumb-item active">Payment</li>
+                </ol>
+                <div class="modal fade fill-in" id="paymentModal" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog ">
+                        <div class="modal-content">
+
+                            <div class="modal-body">
+                                <iframe id="paymentFrame" style="height: 100vh;width: 100%" frameborder="0" allowtransparency="true" src="detail/saved_resource.html">
+                                    <body>
+                                    </body>
+                                </iframe>
+                            </div>
+                            <div class="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade fill-up" data-backdrop="static" data-keyboard="false" id="paymentError" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog ">
+                        <div class="modal-content-wrapper">
+                            <div class="modal-content" style="background: white">
+                                <div class="modal-header clearfix text-left">
+                                    <!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i-->
+                                            <!--class="pg-close fs-14"></i>-->
+                                    <!--</button>-->
+                                    <h5 class="text-danger">Payment <span class="semi-bold">Failed</span></h5>
+                                 </div>
+                                <div class="modal-body">
+                                    <form role="form" class="ng-pristine ng-valid">
+                                        <div class="form-group-attached">
+                                            <div class="row">
+                                                <p>Sorry, we were unable to process your payment using Interswitch Webpay gateway.</p>
+                                                <p class="ng-binding"> <strong>REASON</strong>: </p>
+
+                                                <p>  However, we have another option for you. Kindly click on
+                                                    the button to continue.
+                                                </p>
+                                            </div>
+
+                                        </div>
+                                    </form>
+                                    <div class="row">
+                                        <div class="col-md-4">
+
+                                        </div>
+                                        <div class="col-md-8 m-t-10 sm-m-t-10">
+                                            <button type="button" class="btn   m-t-5" ng-click="cancelOtherOption()">Decline</button>
+
+                                            <button type="button" class="btn btn-primary m-t-5" ng-click="anotherOption()">Try another option </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+
+                <div id="rootwizard" class="m-t-0 p-t-0 section">
+
+                    <ul class="nav nav-tabs nav-tabs-linetriangle nav-tabs-separator nav-stack-sm" role="tablist" data-init-reponsive-tabs="dropdownfx">
+                        <li class="nav-item" ng-click="selectedTab =1">
+                            <a selectedTab === 1 }" data-toggle="tab" href="#" role="tab" class="active" aria-expanded="true"><i class="fa fa-user tab-icon"></i> <span>Payment Detail</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a selectedTab === 2 }" data-toggle="tab" href="#" role="tab" class="" aria-expanded="false"><i class="fa fa-credit-card tab-icon"></i> <span>Payment Option </span></a>
+                        </li>
+
+                    </ul>
+
+                    <div class="tab-content">
+                        <div ng-class="{&#39;hidden&#39;:!showError}" class="alert alert-danger text-center hidden" role="alert">
+                            <span id="errorMeg" class="ng-binding"></span>
+                        </div>
+                        <div selectedTab === 1 }" class="tab-pane slide-left  p-l-20 p-r-20 sm-no-padding active" id="tab1">
+                            <div class="row row-same-height">
+                                <div class="col-md-5 b-r b-dashed b-grey ">
+                                    <div class="padding-30 sm-padding-5 sm-m-t-15">
+
+
+                                        <h3>Your current bill </h3>
+                                        <div><p class="pull-right bold">{{request.session.customer.acc_no}}</p>
+                                            <p> {{request.session.customer.name}}</p></div>
+                                        <p class="small hint-text">{{request.session.customer.street}}</p>
+                                        <table class="table table-condensed">
+                                            <tbody><tr>
+                                                <td class=" col-md-9">
+                                                    <span class="m-l-10 font-montserrat fs-11 all-caps">Billed amount</span>
+                                                </td>
+                                                <td class=" col-md-3 text-right">
+                                                    <span>₦{{request.session.customer.billedamount}} </span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class=" col-md-9">
+                                                    <span class="m-l-10 font-montserrat fs-11 all-caps">VAT</span>
+                                                </td>
+                                                <td class=" col-md-3 text-right">
+                                                    <span>₦ {{request.session.customer.vat}}</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class=" col-md-9">
+                                                    <span class="m-l-10 font-montserrat fs-11 all-caps">Arrears</span>
+                                                </td>
+                                                <td class=" col-md-3 text-right">
+                                                    <span>₦ {{request.session.customer.credit}}</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2" class=" col-md-3 text-right">
+                                                    <h4 class="text-primary no-margin font-montserrat">
+                                                        ₦{{request.session.customer.total}}</h4>
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+
+                                        <!--<p class="small">Bill is due by 2017/11/23. nonpayment is liable for disconnection </p>-->
+                                    </div>
+                                </div>
+                                <div class="col-md-7">
+                                    <div class="padding-30 sm-padding-5">
+                                        <br>
+                                        <br>
+                                        <form id="paydetail" role="form" autocomplete="off" class="ng-pristine ng-valid-email ng-invalid ng-invalid-required" novalidate="novalidate">
+                                            <p>Payments</p>
+                                            <div class="form-group-attached">
+                                                <div class="row clearfix">
+                                                    <div class="col-md-8">
+                                                        <div class="form-group form-group-default input-group">
+                                                            <div class="form-input-group">
+                                                                <label>Amount</label>
+                                                                <input id="amount" ng-model="formService.payamount" type="text" data-a-dec="." data-a-sep="," class="autonumeric form-control ng-pristine ng-untouched ng-valid ng-not-empty ng-valid-required amount" required="" aria-required="true">
+                                                            </div>
+                                                            <div class="input-group-addon">
+                                                                NGN
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                            <br>
+                                            <p>Feedback </p>
+                                            <div class="form-group-attached">
+                                                <div class="form-group form-group-default ">
+                                                    <label for="email">Email Address</label>
+                                                    <input id="email" ng-model="email" name="email" value="" type="email" class="email form-control ng-pristine ng-untouched ng-valid ng-empty ng-valid-email" placeholder="email address">
+                                                </div>
+                                                <div class="form-group form-group-default required" aria-required="true">
+                                                    <label for="phoneNumber">Phone Number</label>
+                                                    <input id="phoneNumber" name="phoneNumber" ng-model="phoneNumber" type="tel" class="phone form-control ng-pristine ng-untouched ng-empty ng-invalid ng-invalid-required" placeholder="active phone number" value="" required="" aria-required="true">
+                                                </div>
+
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div selectedTab === 2 }" class="tab-pane slide-left p-l-20 p-r-20   sm-no-padding" id="tab2">
+                            <div class="row row-same-height">
+                                <div class="col-md-5 b-r b-dashed b-grey ">
+                                    <div class="padding-30 sm-padding-5 sm-m-t-15">
+                                        <h2>We Secured Your Line</h2>
+                                        <p>You are about to make the following payment to Enugu Electricity Distribution Company, as payment for Energy usage</p>
+                                        <p class="small hint-text">Kindly confirm the details below</p>
+                                        <table class="table table-condensed">
+                                            <tbody><tr>
+                                                <td class=" col-md-9">
+                                                    <span class="m-l-10 font-montserrat fs-11 all-caps">Transaction Ref</span>
+                                                </td>
+                                                <td class=" col-md-3 text-right" style="width: 200px">
+                                                    <span class="bold ng-binding"></span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class=" col-md-9">
+                                                    <span class="m-l-10 font-montserrat fs-11 all-caps">Customer Name</span>
+                                                </td>
+                                                <td class=" col-md-3 text-right">
+                                                    <span> RAILWAY DIV.DIRECTOR</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class=" col-md-9">
+                                                    <span class="m-l-10 font-montserrat fs-11 all-caps">Account Number</span>
+                                                </td>
+                                                <td class=" col-md-3 text-right">
+                                                    <span>3175382437</span>
+                                                    <input id="accNumber" type="hidden" value="3175382437">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class=" col-md-9">
+                                                    <span class="m-l-10 font-montserrat fs-11 all-caps"></span>
+                                                </td>
+                                                <td colspan="2" class=" col-md-3 text-right">
+                                                    <h4 class="text-primary no-margin font-montserrat ng-binding">₦
+                                                        0.0</h4>
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                        <p class="small">By clicking Pay Now You will Agree to the Payment <a target="_blank" href="https://energypay.myeedc.com/energypay/termsAndConditions">Terms &amp; Conditions</a></p>
+                                    </div>
+                                </div>
+                                <div class="col-md-7">
+                                    <div class="padding-30 sm-padding-5">
+                                        <h4>Select payment option</h4>
+                                        <br><br>
+                                        <div  cardOption}" class="card card-default">
+                                            <div class="card-header " role="tab">
+                                                <div class="card-title">
+                                                    <div class="checkbox check-primary  checkbox-circle">
+                                                        <input ng-click="bankOption=false;firstCheckout=false" ng-model="cardOption" type="checkbox" id="creditCard" class="ng-pristine ng-untouched ng-valid ng-empty">
+                                                        <label for="creditCard">Debit Card</label>
+                                                    </div>
+                                                </div>
+                                                <ul class="list-unstyled pull-right list-inline no-margin">
+                                                    <!--li>
+                                                        <img width="51" height="32"
+                                                             src="/energypay/images/visa.png">
+
+                                                    </li>
+                                                    <li>
+                                                        <img width="51" height="32"
+                                                             src="/energypay/images/verve.png">
+
+                                                    </li>
+                                                    <li>
+                                                        <img width="51" height="32"
+                                                             src="/energypay/images/mastercard.png">
+
+                                                    </li-->
+                                                    <li>
+                                                        <img width="220" src="detail/isw_logo_new_combined.png">
+
+                                                    </li>
+                                                    <!--li>
+                                                        <img width="100" height="32"
+                                                             src="/energypay/images/etranzact.jpg">
+
+                                                        </li-->
+                                                </ul>
+                                            </div>
+                                        </div>
+
+                                        <div  bankOption}" class="card card-default">
+                                            <div class="card-header " role="tab">
+
+                                                <h4 class="card-title">
+                                                    <div class="checkbox check-primary  checkbox-circle">
+                                                        <input ng-click="cardOption=false;firstCheckout=false " type="checkbox" ng-model="bankOption" id="bank" class="ng-pristine ng-untouched ng-valid ng-empty">
+                                                        <label for="bank">Bank Transfer</label>
+                                                    </div>
+                                                </h4>
+                                                <ul class="list-unstyled pull-right list-inline no-margin">
+                                                    <li>
+                                                        <img width="40" height="32" src="detail/bank.png">
+
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+
+        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="padding-20 sm-padding-5 sm-m-b-20 sm-m-t-20 bg-white clearfix">
+
+                            <ul class="pager wizard no-style">
+                                <li ng-class="{&#39;hidden&#39;:selectedTab === 2 }" class="next">
+                                    <button ng-click="gotoNextTab()" class="btn btn-primary btn-cons paystack btn-animated from-left fa fa-forward pull-right" type="button">
+                                        <span>Next</span>
+                                    </button>
+                                </li>
+                                <li ng-class="{&#39;hidden&#39;:selectedTab === 1 }" class="next finish hidden">
+                                    <button  id="payBtn" class="btn paystack btn-primary btn-cons btn-animated from-left fa fa-check pull-right" type="button">
+                                        <span>Pay Now</span>
+                                    </button>
+                                </li>
+                                <li class="previous first hidden">
+                                    <button class="btn btn-default btn-cons btn-animated from-left fa fa-cog pull-right" type="button">
+                                        <span>First</span>
+                                    </button>
+                                </li>
+                                <li class="previous">
+                                    <button ng-click="selectedTab =1" class="btn btn-default btn-cons pull-right" type="button">
+                                        <span>Previous</span>
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="wizard-footer padding-20 bg-master-light">
+                            <p class="small hint-text pull-left no-margin">
+                                <a href="https://energypay.myeedc.com/energypay/">Return home</a>
+                            </p>
+                            <div class="pull-right">
+                                <img src="detail/eedclogo.png" width="50" height="22">
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class=" container-fluid  container-fixed-lg footer">
+            <div class="copyright sm-text-center">
+                <p class="small no-margin pull-left sm-pull-reset">
+                    <span class="hint-text">Copyright © <script>document.write(new Date().getFullYear())</script>2021 </span>
+                    <span class="font-montserrat">EEDC</span>.
+                    <span class="hint-text">All rights reserved. </span>
+                    <span class="sm-block"><a target="_blank" href="https://energypay.myeedc.com/energypay/termsAndConditions" class="m-l-10 m-r-10">Terms of use</a> <span class="muted">|</span> <a target="_blank" href="https://energypay.myeedc.com/energypay/termsAndConditions" class="m-l-10">Privacy Policy</a></span>
+                </p>
+        
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<div id="quickview" class="quickview-wrapper" data-pages="quickview">
+
+
+    <a class="btn-link quickview-toggle" data-toggle-element="#quickview" data-toggle="quickview"><i class="pg-close  " style=" font-size: 20px; "> Close </i></a>
+
+    <div class="">
+        <br>
+        <br>
+
+        <div class="card-block text-center">
+            <h2>Login</h2>
+            <br>
+            <br>
+            <br>
+            <br>
+            <a id="googleLoginBtn" class="btn btn-block btn-social btn-lg btn-google text-white">
+                <i class="fa fa-google"></i><span id="gtext">Sign in with google</span></a>
+
+            <a onclick="fb_login();" class="btn btn-block btn-social btn-lg btn-facebook text-white">
+                <i class="fa fa-facebook"></i> <span id="fText">Sign in with facebook</span></a>
+
+            <button type="button" class="btn btn-block btn-success m-b-15 hide hidden">
+                <span>Login with <b>Twitter</b></span>
+            </button>
+
+        </div>
+
+    </div>
+</div>
+
+
+
+    <script src="{% static 'detail/bootstrap.min.js' %}" type="text/javascript"></script>
+    <script src="{% static 'detail/jquery.scrollbar.min.js' %}"></script>
+
+
+    <!--<script src="/javascripts/pages.social.min.js"></script>-->
+    <script src="{% static 'detail/pages.min.js' %}"></script>
+    <script src="https://js.paystack.co/v1/inline.js"></script>
+    <!-- END: Page Script JS-->
+<!---------------------------------------------END DATA TABLE----------------------------------->
+
+
+
+<script>
+
+$(".paystack").on('click',function(e)
+{
+
+let pay = $(this)
+let handler = PaystackPop.setup({
+  key: 'pk_test_7e61081e3bc827d4dec381ea0cd672c23cd2827b',
+  email: $(".email").val(),
+  amount: $(".amount").val() + '00',
+  currency: "NGN",
+  ref: ''+Math.floor((Math.random() * 1000000000) + 1), // generates a pseudo-unique reference. Please replace with a reference you generated. Or remove the line entirely so our API will generate one for you
+  metadata: {
+     custom_fields: [
+        {
+            display_name: "Mobile Number",
+            variable_name: "mobile_number",
+            value: "+2348012345678"
+        }
+     ]
+  },
+  callback: function(response){
+   console.log(response)
+      window.location.href = "/paystack/"+response.trxref+"/"
+  },
+  onClose: function(){
+      alert('window closed');
+  }
+});
+handler.openIframe();
+
+})
+</script>
+
+  </body></html>
