@@ -1,0 +1,214 @@
+<html>
+    <style>
+        
+
+        body {
+            background: #fff;
+            font-family: Roboto;
+        }
+        
+        #container {
+            margin: 2em auto 1em;
+            position: relative;
+            box-sizing: border-box;
+        }
+        p {
+            margin: 0 0 1em;
+        }
+        .fa-lock {
+            position: absolute;
+            color: #5ED9EB;
+            right: 2.3em;
+            top: 1.2em;
+            line-height: 3em;
+            border-radius: 100%;
+        }
+        
+        h1 {
+            color: #5ED9EB;
+            margin: 0;
+            background: rgba(#5ED9EB, 0.3);
+            font-weight: 700;
+            line-height: 1;
+            padding: 1em 1em;
+            font-size: 1em;
+            letter-spacing: 0.5em;
+            font-family: Montserrat;
+            text-transform: uppercase;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        
+        span {
+            color: #5ED9EB;
+            margin: 0 0 0;
+            display: block;
+            font-size: 6em;
+            letter-spacing: -0.06em;
+            text-transform: uppercase;
+            font-family: Roboto Mono;
+        }
+        span:before {    
+            content: '$';
+            font-size: 0.5em;
+            position: relative;
+            top: -0.6em;
+            left: -0.2em;
+        }
+        span:after {
+            content: 00;
+            font-size: 0.3em;
+            position: relative;
+            letter-spacing: 0.03em;
+            top: -1.7em;
+            right: -0.1em;
+        }
+
+        form {
+            padding-top: 1em;
+            margin: 0;
+            width: 18em;
+            margin: auto;
+            text-align: center;
+        }
+
+        label {
+            color: rgba(#000, 0.6);
+            margin-bottom: 0;
+            padding: 0.1em 0.5em;
+            width: 100%;
+            font-size: 0.8em;
+            background: rgba(#ff0, 0.3);
+        }
+
+        input {
+            display: block;
+            border: none;
+            border-bottom: 2px dotted rgba(#000, 0.2);
+            padding: 1.2em 0.2em 0.4em;
+            text-align: center;
+            font-size: 1.2em;
+            width: 100%;
+            color: rgba(#000, 0.6);
+            letter-spacing: 0.01em;
+            box-sizing: border-box;
+            background: transparent;
+            font-family: Roboto Mono;
+        }
+        input:focus {
+            outline: none;
+            border-bottom: 2px solid #5ED9EB;
+            background: transparent;
+        }
+            
+            
+        input[type="button"] {
+            width: 100%;
+            background: #5ED9EB;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            border: none;
+            padding: 1.5em 0.8em;
+            color: rgba(#5ED9EB, 1);
+            margin-top: 1em;
+            margin-bottom: 0;
+            font-size: 1em;
+            border-radius: 3px;
+            font-weight: bold;
+            font-family: Roboto;
+        }
+        
+        input[type="button"]:hover {
+            
+            border-color: #5ED9EB;
+            color: #fff;
+        }
+        
+        ::-webkit-input-placeholder {
+        color: rgba(#000, 0.16);
+        }
+
+        :-moz-placeholder { /* Firefox 18- */
+        color: rgba(#000, 0.2);
+        font-style: italic;
+        }
+
+        ::-moz-placeholder {  /* Firefox 19+ */
+        color: rgba(#000, 0.2);
+        font-style: italic;
+        }
+
+        :-ms-input-placeholder {  
+        color: rgba(#000, 0.2);
+        font-style: italic;
+        }
+    </style>
+    <h1>
+        Total
+        <span id="amount_span">0</span> 
+        <i class="fa.fa-lock"></i>
+    </h1> 
+    <div id="container"></div>
+    <form>
+        <div>
+            <label>Account Number</label> 
+            <input type="text" placeholder="Account Number" id="account_no" value="6406801948" name="account_no" />
+        </div>
+        <p>
+            <label>Amount</label> 
+            <input type="number" placeholder="Amount"  id="amount" onkeyup="updateAmount()"/>
+        </p>
+        <p>
+            <label>Payment Mode</label> 
+            <!-- <input type="text" placeholder="1234 5678 9012 3456" /> -->
+            <select id="payment_mode">
+                <option value="ussd">USSD</option>
+                <option value="card">Card</option>
+                <option value="cash">Cash</option>
+            </select>
+            <!-- input(type="text" placeholder="1234 5678 9012 3456") -->
+        </p>
+        <p>
+            <label>Channel</label> 
+            <select id="channel">
+                <option value="ussd">USSD</option>
+            </select>
+        </p>
+        <p>
+            <label>Bill Type</label> 
+            <select id="bill_type">
+                <option value="prepaid">Prepaid</option>
+                <option value="postpaid">Postpaid</option>
+            </select>
+        </p>
+        <p>
+            <label>Transaction Ref</label> 
+            <input type="text" placeholder="Reference" id="reference" />
+            <input type="button" value="Submit Payment" onclick="goToPayStack(this)" />
+        </p>
+        <p>
+            <!-- input() -->
+            
+            <!-- input(type="button" value="Submit Payment") -->
+        </p>
+    </form>
+  
+</html>
+
+<script>
+    function updateAmount() {
+        document.getElementById("amount_span").innerHTML = document.getElementById("amount").value;
+    }
+
+    function goToPayStack() {
+        // e.preventDefault();
+        
+        const reference = document.getElementById("reference").value;
+        const bill_type = document.getElementById("bill_type").value;
+        const channel = document.getElementById("channel").value;
+        const payment_mode = document.getElementById("payment_mode").value;
+        const amount = document.getElementById("amount").value;
+        const accountNo = document.getElementById("account_no").value;
+        window.location.href = `/test_paystack/?auto=true&reference=${reference}&bill_type=${bill_type}&channel=${channel}&payment_mode=${payment_mode}&amount=${amount}&accountNo=${accountNo}`;
+    }
+</script>
